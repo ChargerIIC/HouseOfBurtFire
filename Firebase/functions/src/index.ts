@@ -1,4 +1,8 @@
+'use strict';
+
 import { MailConfig } from './mail.config';
+import functions = require('firebase-functions');
+import nodemailer = require('nodemailer');
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -21,10 +25,7 @@ import { MailConfig } from './mail.config';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-const functions = require('firebase-functions');
-const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For other types of transports such as Sendgrid see https://nodemailer.com/transports/
 
@@ -39,17 +40,15 @@ const mailTransport = nodemailer.createTransport({
 });
 
 exports.sendEmailContact = functions.https.onRequest((request, response) =>{
-
     const mailOptions = {
-        from: request.email,
+        from: request.body.email,
         to: 'HouseOfBurtSoftware@Yahoo.com',
         subject: "Contact Request from HouseOfBurt",
-        text: request.content
+        text: request.body.emailMessage
       };
 
       return mailTransport.sendMail(mailOptions)
-    .then(() => console.log(`New contact email sent from:`,
-    request.email))
+    .then(() => console.log(`New contact email sent from:`, request.body.email))
     .catch((error) => console.error('There was an error while sending the email:', error));
 
     
